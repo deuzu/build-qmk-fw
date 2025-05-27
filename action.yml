@@ -23,6 +23,9 @@ inputs:
   output-dir:
     description: Directory in the workspace where built firmware will be placed
     default: qmk-output
+  modules:
+    description: A comma-separated list of module URLs (e.g. https://github.com/getreuer/qmk-modules)
+    default: ""
 
 outputs:
   built-images:
@@ -37,3 +40,4 @@ runs:
     - ${{ inputs.controller }}
     - ${{ inputs.output-dir }}
     - ${{ inputs.local-keymap-path }}
+    - ${{ inputs.modules }}

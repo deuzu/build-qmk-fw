@@ -7,6 +7,7 @@ readonly keymap="$2"
 readonly controller="$3"
 readonly qmk_output="$4"
 readonly local_keymap="$5"
+readonly modules="$6"
 
 # Find the keymaps directory the same way QMK CLI does
 if [ -n "$local_keymap" ]; then
@@ -24,6 +25,13 @@ if [ -n "$local_keymap" ]; then
   echo "Copying local keymap into $keymap_lookup_dir/keymaps"
   cp -rv "$local_keymap" "$keymap_lookup_dir/keymaps/$(basename "$local_keymap")"
 fi
+
+for module in $(echo "$modules" | sed "s/,/ /g")
+do
+    user=$(echo "$module" | sed -e 's/^https:\/\///' -e 's/\.git$//' | cut -d'/' -f2)
+    git -C /opt/qmk_firmware submodule add "$modules" modules/"$user"
+    git -C /opt/qmk_firmware submodule update --init --recursive
+done
 
 qmk config user.qmk_home=/opt/qmk_firmware
 qmk compile -kb "$keyboard" -km "$keymap" ${controller:+-e CONVERT_TO="$controller"}
